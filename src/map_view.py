@@ -21,7 +21,7 @@ class MapPlot:
         self._locations = location_csv
         self._loc_df = pd.read_csv(self._locations)
     
-    def _calculate_zoom(self, width_to_height=4Author identity unknown.0):
+    def _calculate_zoom(self, width_to_height=4):
         maxlon, minlon = self._loc_df.Longitude.max(), self._loc_df.Longitude.min()
         maxlat, minlat = self._loc_df.Latitude.max(), self._loc_df.Latitude.min()
         center = {
