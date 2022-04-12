@@ -15,5 +15,5 @@ class CsvConnector(BaseConnector):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        return exc_traceback
+        pass
     
