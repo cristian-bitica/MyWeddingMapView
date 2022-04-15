@@ -1,5 +1,6 @@
 import sqlite3
 from typing import Union
+from pandas import DataFrame
 from src.base_connector import BaseConnector
 
 
@@ -22,16 +23,22 @@ class SqliteConnector(BaseConnector):
         except Exception as e:
             print(f'Error on closing DB connection: {e}')
     
-    def query(self, select: Union[list, dict], from_: str, where: dict):
+    def run_query(self, select: Union[list, dict], from_: str, where: dict):
         if isinstance(select, list):
-            sel = ", ".join([name for name in select])
+            sel_stm = ", ".join([name for name in select])
         elif isinstance(select, dict):
-            sel = ", ".join(['{} as {}'.format(key, value) for key, value in select.items()])
+            sel_stm = ", ".join(['{col} as {alias}'.format(col=key, alias=value) for key, value in select.items()])
         else:
-            raise ValueError("'select' argument must be of type list or dict")
+            raise TypeError("'select' argument must be of type list or dict")
         
         if not isinstance(from_, str):
             from_ = str(from_)
         
-        if not isinstance(where, dict):
-            pass
+
+        query_stm = f"SELECT {sel_stm} FROM {from_} WHERE {where}"
+        self._cursor.execute(query_stm)
+        result = self._cursor.fetchall()
+        self._cursor.close()
+        self._df = DataFrame(columns=[select], data=result)
+        print(self._df)
+
